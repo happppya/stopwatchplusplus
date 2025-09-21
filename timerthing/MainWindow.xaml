@@ -1,0 +1,284 @@
+﻿<Window x:Class="timerthing.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:timerthing"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        mc:Ignorable="d"
+        
+        WindowStyle="None"
+        AllowsTransparency="False"
+        ResizeMode="CanResize"
+        
+        Title="MainWindow" 
+        Height="350" Width="600"
+        MinHeight="150" MinWidth="490"
+        >
+
+    <Window.Resources>
+        <local:SecondsToTimeConverter x:Key="SecondsToTimeConverter"/>
+
+        <SolidColorBrush x:Key="ActiveHoverBrush" Color="#FF8CA6D6"/>
+        <SolidColorBrush x:Key="InactiveHoverBrush" Color="#FF505a78"/>
+        <SolidColorBrush x:Key="ActivatedBrush" Color="#FF7889BB"/>
+        <SolidColorBrush x:Key="DeactivatedBrush" Color="#FF46506D"/>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#FFF9F5FF"/>
+            <Setter Property="FontFamily" Value="Yu Gothic UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <!-- Add more setters as needed -->
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Foreground" Value="#FFF9F5FF"/>
+            <Setter Property="FontFamily" Value="Yu Gothic UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <!-- Add more setters as needed -->
+        </Style>
+
+        <Style x:Key="ActiveToggleButtonStyle" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="#FF46506D"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover + Active -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsActive}" Value="True"/>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF8CA6D6" Duration="0:0:0.14"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiDataTrigger.EnterActions>
+                                <MultiDataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF7889BB" Duration="0:0:0.14" FillBehavior="Stop"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiDataTrigger.ExitActions>
+                            </MultiDataTrigger>
+                            <!-- Hover + Inactive -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsActive}" Value="False"/>
+                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF505a78" Duration="0:0:0.14"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiDataTrigger.EnterActions>
+                                <MultiDataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF46506D" Duration="0:0:0.14" FillBehavior="Stop"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiDataTrigger.ExitActions>
+                            </MultiDataTrigger>
+                            <!-- Active (not hovered) -->
+                            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF7889BB" Duration="0:0:0.3"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF46506D" Duration="0:0:0.3" FillBehavior="Stop"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome
+        CaptionHeight="0"
+        CornerRadius="0"
+        GlassFrameThickness="0"
+        ResizeBorderThickness="6"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Grid Margin="0,0,0,0" Background="#FF28262C">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+
+        <!-- header -->
+        <Grid Background="#99202227" MouseLeftButtonDown="Header_MouseLeftButtonDown" Height="18" VerticalAlignment="Top" Grid.RowSpan="2">
+
+            <Button Content="✕"
+            Width="18"
+            Height="30"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Background="Transparent"
+            Foreground="White"
+            BorderThickness="0"
+            FontSize="16"
+            WindowChrome.IsHitTestVisibleInChrome="True"
+            Click="CloseButton_Click" RenderTransformOrigin="0,0" Margin="0,0,0,0"/>
+
+            <Button Content="&#x2013;"
+            Width="18"
+            Height="30"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Margin="0,0,18,0"
+            Background="Transparent"
+            Foreground="White"
+            BorderThickness="0"
+            FontSize="16"
+            WindowChrome.IsHitTestVisibleInChrome="True"
+            Click="MinimizeButton_Click"/>
+
+            <TextBlock TextWrapping="Wrap" Text="stopwatch++" VerticalAlignment="Center" HorizontalAlignment="Left" Width="98" Foreground="#FFF9F5FF" FontFamily="Yu Gothic UI Semibold" Margin="6,0,0,0" Height="22" FontSize="15"/>
+            <TextBlock TextWrapping="Wrap" Text="{Binding CenterDisplay}" VerticalAlignment="Top" TextAlignment="Center" HorizontalAlignment="Center" Width="260" Foreground="#FFF9F5FF" FontFamily="Cascadia Code" Height="18" FontSize="10" Margin="0,3,0,0"/>
+
+        </Grid>
+
+        <!-- Main vertical scrollviewer for items -->
+        <ScrollViewer Margin="0,18,0,0" VerticalScrollBarVisibility="Hidden" Grid.Row="0">
+            <ItemsControl x:Name="GridList">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+
+                        <Grid Height="54" Margin="0,10,0,0" MouseEnter="Item_MouseEnter" MouseLeave="Item_MouseLeave">
+
+                            <Grid.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+
+                                    <GradientStop Color="#FF2F3854" Offset="0.02"/>
+
+                                </LinearGradientBrush>
+                            </Grid.Background>
+
+                            <Border BorderThickness="1">
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#FF586BA4" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </Border.BorderBrush>
+                            </Border>
+
+                            <TextBox TextWrapping="Wrap" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="451" Margin="10,0,0,0" Background="{x:Null}"/>
+                            <Button Style="{StaticResource ActiveToggleButtonStyle}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Right"
+                                    Height="20"
+                                    Width="288"
+                                    Margin="0,0,15,0"
+                                    Command="{Binding DataContext.ToggleActiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+CommandParameter="{Binding}"
+                                    
+                                    >
+
+
+                                <TextBlock Text="{Binding Seconds, Converter={StaticResource SecondsToTimeConverter}}"
+                                           TextAlignment="Center"
+                                           FontFamily="Cascadia Code"
+                                           FontSize="10"
+                                           VerticalAlignment="Center"
+                                           Foreground="Gainsboro"/>
+                            </Button>
+                        </Grid>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Horizontal scrollviewer for groups at the bottom -->
+        <ScrollViewer Margin="0,0,0,0"
+                      Height="25"
+                      VerticalAlignment="Bottom"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Hidden"
+                      Grid.Row="1">
+            <ItemsControl x:Name="GroupList" Height="25" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button 
+                            Style ="{StaticResource ActiveToggleButtonStyle}"
+                            Margin="4,5,0,2" 
+                            Padding="10,10,10,10"
+                            Command="{Binding DataContext.ToggleExclusive, RelativeSource={RelativeSource AncestorType=Window}}"
+CommandParameter="{Binding}"
+                            MouseEnter="Group_MouseEnter"
+                            MouseLeave="Group_MouseLeave"
+                            >
+                            <TextBox 
+                                Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                IsReadOnly="True"
+                                Focusable="False"
+                                Cursor="Arrow"
+                                PreviewMouseDoubleClick="TextBox_Focus"
+                                LostFocus="TextBox_LostFocus"
+                                VerticalAlignment="Center" TextAlignment="Center" 
+                                Foreground="#FFF9F5FF" FontFamily="Yu Gothic UI Semibold" FontSize="13"
+                                Background="{x:Null}"
+                                ContextMenu="{x:Null}"
+                                
+                                
+                                />
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
+</Window>
